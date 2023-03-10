@@ -13,11 +13,11 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024     # Giới hạn kích th�
 db = SQLAlchemy(app)
 
 
-class CSVFile(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    data = db.Column(db.LargeBinary, nullable=False)
-    date_uploaded = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+# class CSVFile(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(100), nullable=False)
+#     data = db.Column(db.LargeBinary, nullable=False)
+#     date_uploaded = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
 if __name__ == '__main__':
