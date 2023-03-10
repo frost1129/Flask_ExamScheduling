@@ -1,5 +1,6 @@
 import os.path
-import string
+import csv
+import graph_coloring as gc
 
 from schedule_app import app
 from flask import render_template, request, redirect, url_for
@@ -41,10 +42,52 @@ def home():
 
 @app.route('/schedule', methods=['GET', 'POST'])
 def schedule():
-    # Lấy data từ coloring
+    # Lấy tên file csv
+    uploaded_file = os.listdir(app.config['UPLOAD_FOLDER'])
+    file_name = None
+    for file in uploaded_file:
+        file_name = file
+
+    # Sử dụng graph-coloring để phân ngày cho từng môn thi
+    sorted_course_day = course_date_sort(file_name)
+
     # Hiển thị dữ liệu
 
-    return render_template('schedule.html')
+    return render_template('schedule.html', data=sorted_course_day)
+
+
+def course_date_sort(file_name):
+    # Phân ngày cho các môn thi
+    course_dict = {}
+    course_graph = gc.Graph()
+
+    # Lấy dữ liệu từ file csv và xử lý thêm vào đồ thị
+    with open(os.path.join(app.config['UPLOAD_FOLDER'], file_name), 'r', encoding='utf8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            class_code = row['Mã MH']
+            student_id = row['MSSV']
+
+            if class_code not in course_dict:
+                course_dict[class_code] = []
+
+            course_dict[class_code].append(student_id)
+
+    for c in course_dict:
+        course_graph.add_node(c)
+
+    for c1 in course_dict:
+        for c2 in course_dict:
+            if c1 != c2:
+                if set(course_dict[c1]).intersection(set(course_dict[c2])):
+                    course_graph.add_edge(c1, c2)
+
+    # Tô màu đồ thị môn học - sinh viên
+    colored_graph = gc.welsh_powell(course_graph)
+    # Sắp xếp các môn thi theo ngày
+    sorted_graph = sorted(colored_graph.items(), key=lambda x: x[1])
+
+    return sorted_graph
 
 
 @app.route('/delete-csv/<filename>', methods=['POST'])

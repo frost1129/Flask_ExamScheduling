@@ -3,5 +3,17 @@
 {% block title %}Sắp xếp lịch thi{% endblock %}
 
 {% block content %}
+    <table>
+        <tr>
+        <th>Ngày thi</th>
+        <th>Mã môn học</th>
+        </tr>
+        {% for key, value in data %}
+        <tr>
+          <td>{{ value }}</td>
+          <td>{{ key }}</td>
+        </tr>
+        {% endfor %}
+</table>
 
 {% endblock %}
