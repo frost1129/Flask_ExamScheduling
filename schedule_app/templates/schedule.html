@@ -3,17 +3,25 @@
 {% block title %}Sắp xếp lịch thi{% endblock %}
 
 {% block content %}
-    <table>
+<div class="container">
+    <h3>Lịch thi theo ngày các môn</h3>
+
+    <table class="table table-striped table-hover">
         <tr>
-        <th>Ngày thi</th>
-        <th>Mã môn học</th>
+            <th scope="col">Ngày thi</th>
+            <th scope="col">Mã môn học</th>
+            <th scope="col">Tên môn học</th>
+            <th scope="col">Mã lớp học</th>
         </tr>
-        {% for key, value in data %}
+        {% for row in data %}
         <tr>
-          <td>{{ value }}</td>
-          <td>{{ key }}</td>
+            <td scope="row">{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
         </tr>
         {% endfor %}
-</table>
+    </table>
+</div>
 
 {% endblock %}
