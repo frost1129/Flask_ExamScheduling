@@ -3,6 +3,7 @@ import csv
 import graph_coloring as gc
 
 from schedule_app import app
+from datetime import datetime, timedelta
 
 
 def course_date_sort(file_name):
@@ -31,13 +32,40 @@ def course_date_sort(file_name):
                 if set(course_dict[c1]).intersection(set(course_dict[c2])):
                     course_graph.add_edge(c1, c2)
 
-    # Tô màu đồ thị môn học - sinh viên
-    colored_graph = gc.welsh_powell(course_graph)
-
-    return colored_graph
+    return course_graph
 
 
-def temp_time_table(file_name, sorted_course_day):
+def color_graph(graph):
+    return gc.welsh_powell(graph)
+
+
+def get_all_courses(file_name, graph):
+    course_class = {}
+    with open(os.path.join(app.config['UPLOAD_FOLDER'], file_name), 'r', encoding='utf8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            code = row['Mã MH']
+            name = row['Tên môn']
+            neighbors = graph.get_neighbors(code)
+
+            if code not in course_class:
+                course_class[code] = {'Tên môn': name, 'Các lớp có cùng sv tham gia học': []}
+
+            for neighbor in neighbors:
+                if neighbor not in course_class[code]['Các lớp có cùng sv tham gia học']:
+                    course_class[code]['Các lớp có cùng sv tham gia học'].append(neighbor)
+
+    # course_list = []
+    # num = 0
+    # for code in course_class:
+    #     name = course_class[code]['Tên môn']
+    #     classes = course_class[code]['Các lớp có cùng sv tham gia học']
+    #     num += 1
+    #     course_list.append((num, code, name, classes))
+    return course_class
+
+
+def temp_time_table(file_name, sorted_course_day, start_date):
     course_class = {}
     with open(os.path.join(app.config['UPLOAD_FOLDER'], file_name), 'r', encoding='utf8') as f:
         reader = csv.DictReader(f)
@@ -56,7 +84,10 @@ def temp_time_table(file_name, sorted_course_day):
 
     for exam in sorted_course_day:
         code = exam[0]
-        day = exam[1]
+        # day = exam[1]
+
+        # Đổi từ mã màu (0, 1, 2...) sang ngày tháng
+        day = date_increment(start_date, exam[1]).strftime("%d/%m/%Y")
 
         name = course_class[code]['Tên môn']
         classes = course_class[code]['Lớp']
@@ -99,6 +130,11 @@ def create_schedule_dict(course_dict, classes_dict):
             schedule[day].append((course, c))
 
     return schedule
+
+
+def date_increment(date, delta_t):
+    delta = timedelta(days=delta_t)
+    return date + delta
 
 
 # def welsh_powell_dict(schedule, room_nums):

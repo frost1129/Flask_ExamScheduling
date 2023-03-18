@@ -33,6 +33,11 @@ class Graph:
                 edges.add(tuple(sorted(edge)))
         return edges
 
+    def get_neighbors(self, node):
+        if node in self.nodes:
+            return list(self.nodes[node])
+        return []
+
 
 def welsh_powell(graph):
     # Sắp xếp các đỉnh theo độ bậc giảm dần
@@ -58,7 +63,7 @@ def welsh_powell(graph):
             if color not in neighbor_colors:
                 colored[node] = color
                 break
-        # print(neighbor_colors)
+
     return colored
 
 

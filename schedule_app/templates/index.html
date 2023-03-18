@@ -49,11 +49,21 @@
     </table>
 
     <form method="post" action="{{ url_for('schedule') }}">
-        <button class="btn btn-success" type="submit">Xếp lịch thi</button>
+        <div class="row justify-content=center">
+            <div class="col-auto">
+                <label class="form-control-plaintext" for="start-date">Chọn ngày bắt đầu thi: </label>
+            </div>
+            <div class="col-auto">
+                <input class="form-control" type="date" id="start-date" name="start-date" required>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-success" type="submit">Xếp lịch thi</button>
+            </div>
+        </div>
     </form>
 
     {% else %}
-    <p>Chưa có file tải lên.</p>
+    <p>Tải file lên để sắp xếp lịch thi.</p>
     {% endif %}
 </div>
 {% endblock %}
